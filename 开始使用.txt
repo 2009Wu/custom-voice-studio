@@ -1,0 +1,31 @@
+自选音色工作室 v0.1.1 — 从这里开始
+
+1. 完整解压整个 ZIP，不要在压缩包内直接运行。
+2. 双击 Start Custom Voice Studio.exe，点击「安装并打开工作室」。
+3. 上传想使用的参考人声（MP3/MP4 等）。
+4. 输入要朗读的文字，或上传一首有原唱的歌曲，然后点击「3. 一键生成」。
+5. 完成后试听并下载 MP3 或无损 FLAC。
+
+两种目标内容一次只选一种。参考声音至少 3 秒，推荐 10–25 秒清晰单人讲话。
+长参考素材会自动选一段有声音的片段；高级选项可修改起点和长度。
+一般无需填写参考片段原话，程序会在本机自动识别。
+结果页可以核对实际参考片段和识别文字；识别错误可换片段或填写准确原话。
+
+需要 Windows 10/11 64 位、6 GB 级以上 NVIDIA 显卡和可用驱动。
+建议 16 GB 系统内存，安装前预留 30 GB 磁盘空间。
+首次安装/首次模型使用需联网下载数 GB。使用期间保持启动器开启。
+本程序目录和运行环境独立，不需要运行原王洪文程序。
+完整手册：docs/Windows-Setup.zh-CN.md
+所有生成作品均为 AI 合成，不是真实人物录音。
+
+English: Extract everything, run Start Custom Voice Studio.exe, click 安装并打开工作室.
+Upload a reference voice, then enter text OR upload a vocal song, and click 一键生成.
+
+桌面入口：首次运行启动器会自动创建「自选音色工作室」桌面快捷方式。
+安装完成后，以后双击桌面图标即可自动启动并打开网页，无需再点「打开工作室」。
+直接下载 ZIP 不会运行程序，请先完整解压并运行一次 EXE。
+请保留完整程序文件夹；移动后运行新位置的 EXE，或点击「创建 / 修复桌面快捷方式」。
+重复双击会打开已有实例，避免重复启动占用显存。关闭启动器会停止本地服务。
+
+Desktop: first launch creates a shortcut. After setup, double-click it to open the studio directly.
+Keep the extracted folder. After moving it, run the EXE at its new location to repair the shortcut.
