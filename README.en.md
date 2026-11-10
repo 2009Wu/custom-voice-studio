@@ -25,3 +25,7 @@ First launcher run and successful setup create a current-user desktop shortcut. 
 ## Disk use
 
 Setup/startup removes only unused PyTorch build-time `.lib` files and `ffplay.exe` from this app’s private runtime. The measured saving on the pinned Windows runtime is 980,103,826 bytes (0.91 GiB). Model tensors, runtime DLLs, bytecode caches, precision, inference settings and export formats are unchanged. The self-contained development compiler/linker workflow is not part of this inference runtime; developers needing custom C++ extensions should use a separate full PyTorch environment. Reserve 30 GB during setup.
+
+## Setup space versus installed size
+
+The 30 GB requirement is free space before first setup, including temporary downloads and extraction; it is not permanent installed size. The measured Custom Voice Studio installation with all cached models is about 11.25 GiB. The Wang app uses the same main runtime/models; its independent total was not remeasured this update. Size varies with caches and results. This update removes a further 183,939,829 bytes of unused upstream demo frontend assets, development headers and FFmpeg manuals, while retaining licenses, the served UI, all model weights, runtime DLLs and useful caches. Subsequent startups use a marker to avoid repeating the file scan; repair setup refreshes it.

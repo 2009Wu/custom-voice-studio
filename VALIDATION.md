@@ -40,3 +40,7 @@ MP4 参考使用 Windows 合成语音生成的测试素材；MP3 参考来自已
 ## v0.1.2
 
 本次体积优化及回归范围见 [体积验证](docs/v0.1.2-Storage-Validation.md)。
+
+## v0.1.3
+
+[安装后体积与验证范围](docs/v0.1.3-Storage-Validation.md)。
