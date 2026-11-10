@@ -1,5 +1,12 @@
 # 更新日志
 
+## v0.1.2 — 精简安装体积
+
+- 安装与启动时自动清理本程序不使用的 PyTorch 开发静态库和 ffplay 播放器，实测运行环境节省 980,103,826 字节（约 980 MB / 0.91 GiB）。不改模型权重、运行 DLL、精度、步数、音高和混音。保留模型缓存和 Python 缓存。安装时仍需预留 30 GB，首次仍会下载数 GB。
+- 已验证两个程序的真实配音和翻唱；同一段自选配音在精简前后 WAV 逐字节一致。
+
+English: Remove unused build-only files from the private inference runtime; preserve model weights, generation settings, runtime DLLs and caches.
+
 ## v0.1.1 — 桌面一键打开
 
 - 首次运行和安装成功后自动创建中文桌面快捷方式；安装后双击直接启动并打开网页。

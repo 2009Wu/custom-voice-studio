@@ -21,3 +21,7 @@ Software is GPL-3.0, derived from Wang Hongwen Voice Studio v0.3.0. Upstream cod
 ## Desktop shortcut
 
 First launcher run and successful setup create a current-user desktop shortcut. After setup, double-click it to start the local server and open the studio directly. A second click reuses the running instance. Keep the extracted app folder. After moving it, run the EXE from the new location or use 创建 / 修复桌面快捷方式 (Create / repair desktop shortcut). Downloading a ZIP alone does not execute the app. Desktop permission errors do not invalidate installation.
+
+## Disk use
+
+Setup/startup removes only unused PyTorch build-time `.lib` files and `ffplay.exe` from this app’s private runtime. The measured saving on the pinned Windows runtime is 980,103,826 bytes (0.91 GiB). Model tensors, runtime DLLs, bytecode caches, precision, inference settings and export formats are unchanged. The self-contained development compiler/linker workflow is not part of this inference runtime; developers needing custom C++ extensions should use a separate full PyTorch environment. Reserve 30 GB during setup.

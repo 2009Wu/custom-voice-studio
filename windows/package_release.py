@@ -26,7 +26,7 @@ EXCLUDED = {'.git', '.runtime', '.cache', '__pycache__', '.pytest_cache',
 REQUIRED = ROOT_FILES | {
     'docs/Windows-Setup.zh-CN.md', 'docs/Windows-Setup.md',
     'windows/runtime-pins.json', 'windows/VoiceStudioLauncher.cs',
-    'windows/package_release.py', 'windows/DesktopIntegration.cs', 'vendor/seed_vc/LICENSE',
+    'windows/package_release.py', 'windows/compact_runtime.py', 'windows/DesktopIntegration.cs', 'vendor/seed_vc/LICENSE',
 }
 
 

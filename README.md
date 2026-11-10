@@ -6,7 +6,7 @@
 
 **[下载 Windows 版](https://github.com/2009Wu/custom-voice-studio/releases/latest/download/Custom-Voice-Studio-Windows.zip)** · [Hugging Face 项目页](https://huggingface.co/spaces/Little-Wang/custom-voice-studio) · [更新记录](CHANGELOG.md)
 
-当前版本 **v0.1.1**。首次安装后会创建桌面快捷方式，以后双击图标就能打开。
+当前版本 **v0.1.2**。首次安装后会创建桌面快捷方式，以后双击图标就能打开。
 
 ## 桌面一键打开
 
@@ -40,6 +40,9 @@
 首次安装和首次模型下载需联网。生成与参考识别均在本机运行，不调用外部推理 API。`.runtime` 是本程序独立运行环境，`.cache` 是模型；无需保留或运行王洪文工具才能使用本程序。运行目录、临时任务目录和默认端口（7870）独立。
 
 安装 ZIP 无损压缩，不含模型和私有环境，也不含任何人物参考录音。FLAC 解码样本与 WAV 完全一致；MP3 保持 320 kbps。生成结果和参考片段临时保留，请及时下载保存。
+
+
+安装后自动移除本程序不使用的开发静态库和播放器，实测节省约 980 MB（0.91 GiB）。模型、运行 DLL、生成参数和音频输出规格不变。自选音色本机安装并缓存模型后约占 11.4 GiB，空间会随缓存和结果变化；安装时仍请预留 30 GB。
 
 ## 许可与来源
 

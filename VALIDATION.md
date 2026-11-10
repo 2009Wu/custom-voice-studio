@@ -36,3 +36,7 @@ MP4 参考使用 Windows 合成语音生成的测试素材；MP3 参考来自已
 生成作品均为 AI 合成演绎，并非人物真实录音。
 
 最新启动器变更验证：[桌面一键打开](docs/Desktop-Shortcut-Validation.md)。
+
+## v0.1.2
+
+本次体积优化及回归范围见 [体积验证](docs/v0.1.2-Storage-Validation.md)。
