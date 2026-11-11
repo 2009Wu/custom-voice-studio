@@ -64,3 +64,17 @@ def prepare_reference(source, job, start=0, seconds=20, max_mb=500):
     sf.write(target,clip,rate,subtype='PCM_24')
     return target, {'source_duration_seconds':duration,'clip_start_seconds':round(start+offset,3),
                     'clip_duration_seconds':round(len(clip)/rate,3),'sample_rate':rate}
+
+
+def use_prepared(source, job):
+    """Keep an explicitly auditioned/cropped PCM reference byte-identical."""
+    import shutil
+    source=Path(source).resolve(strict=True)
+    if source.stat().st_size>10*1024**2: raise ValueError('所选参考片段过大，请先截取 3–25 秒。')
+    audio,rate=sf.read(source,dtype='float32')
+    if audio.ndim!=1 or not 3<=len(audio)/rate<=25.1 or not np.isfinite(audio).all():
+        raise ValueError('请选择 3–25 秒的单声道参考片段。')
+    if float(np.sqrt(np.mean(audio.astype('float64')**2)))<.0001:raise ValueError('参考片段几乎没有声音。')
+    target=job/'reference.wav'
+    if source!=target.resolve():shutil.copy2(source,target)
+    return target,{'clip_start_seconds':0,'clip_duration_seconds':len(audio)/rate,'sample_rate':rate,'selected_by_user':True}

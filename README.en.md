@@ -29,3 +29,10 @@ Setup/startup removes only unused PyTorch build-time `.lib` files and `ffplay.ex
 ## Setup space versus installed size
 
 The 30 GB requirement is free space before first setup, including temporary downloads and extraction; it is not permanent installed size. The measured Custom Voice Studio installation with all cached models is about 11.25 GiB. The Wang app uses the same main runtime/models; its independent total was not remeasured this update. Size varies with caches and results. This update removes a further 183,939,829 bytes of unused upstream demo frontend assets, development headers and FFmpeg manuals, while retaining licenses, the served UI, all model weights, runtime DLLs and useful caches. Subsequent startups use a marker to avoid repeating the file scan; repair setup refreshes it.
+
+
+## Saved works and updates
+
+Completed files are now saved permanently under Documents / Voice Studio作品, separately for each studio. Reopen them from Works history. Audition 10/15/20 seconds before generating a full cover; the accepted excerpt is reused. Redo a selected interval (up to 120 seconds) as a new work, retaining the original. Editable source material expires after 7 days or a 5 GB budget; exports stay. Custom Voice Studio can preview, crop and favorite a reference locally.
+
+Both Windows studios use a shared model cache under LocalAppData / VoiceStudios / models. Existing identical files can be hard-linked without changing model bytes. Runtime environments remain separate. Updates are explicit: check, download and verify, then install/restart; code backups support rollback and interrupted-update recovery. User recordings and prompts are excluded from diagnostics. See [workflow guide](docs/作品与更新.md). First upgrade from an older release requires the complete ZIP. No voice engine or default quality settings were changed.
