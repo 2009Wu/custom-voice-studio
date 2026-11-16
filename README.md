@@ -66,3 +66,5 @@ v0.1.3 进一步移除本程序不使用的上游演示网页资源、开发头�
 **生成作品是 AI 合成演绎，并非人物真实录音。** 分享时请保留合成标注。
 
 ![一键生成界面 / App preview](docs/app-preview.png)
+
+[支持项目](https://ko-fi.com/little_wang)
