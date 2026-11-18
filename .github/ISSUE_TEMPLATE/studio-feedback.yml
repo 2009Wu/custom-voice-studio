@@ -1,0 +1,46 @@
+name: 工作室反馈 / Studio feedback
+description: 提交功能建议、报告 Bug、反馈配音或翻唱质量。 / Share ideas, bugs, or audio quality feedback.
+assignees:
+  - 2009Wu
+body:
+  - type: markdown
+    attributes:
+      value: |
+        反馈会公开显示。请勿附上私人录音、作品、账号资料或其他个人信息。
+        This report is public. Please leave out private recordings, projects, account details, and personal information.
+  - type: dropdown
+    id: studio
+    attributes:
+      label: 工作室 / Studio
+      options:
+        - 王洪文语音工作室 / Wang Hongwen Voice Studio
+        - 自选音色工作室 / Custom Voice Studio
+        - 邓小平语音工作室 / Deng Xiaoping Voice Studio
+        - 多个工作室 / More than one studio
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: 反馈类型 / Category
+      options:
+        - 功能建议 / Feature suggestion
+        - 程序问题 / Bug
+        - 配音或翻唱质量 / Voice or singing quality
+        - 其他意见 / Other feedback
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: 详细说明 / Details
+      description: |
+        建议可以写希望怎么改。报告问题可写操作步骤，质量反馈可写配音还是翻唱、语言、哪一段听起来有问题。
+        Describe your suggestion, how to reproduce the bug, or which speech or singing output needs improvement.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 工作室版本（选填） / App version (optional)
+      description: 在「更新与帮助」里查看。 / Find it under Updates & Help.
