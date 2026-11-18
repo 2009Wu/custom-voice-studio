@@ -1,5 +1,7 @@
 # 自选音色工作室 · Custom Voice Studio
 
+独立的参考音色、制作和结果三栏，支持窄窗口自动换行。 右上角语言菜单列出全球使用人数最多的 20 种语言，普通话可选简体或繁体。切换语言会保留草稿。
+
 [English](README.en.md) · [安装说明](docs/Windows-Setup.zh-CN.md) · [测试记录](VALIDATION.md)
 
 选一段参考声音，让它读你写的文字，或翻唱你上传的歌曲。支持 MP3、MP4、WAV、M4A、FLAC，在自己的 Windows 电脑上运行。
@@ -65,6 +67,6 @@ v0.1.3 进一步移除本程序不使用的上游演示网页资源、开发头�
 
 **生成作品是 AI 合成演绎，并非人物真实录音。** 分享时请保留合成标注。
 
-![一键生成界面 / App preview](docs/app-preview.png)
+![新版生成界面](docs/studio-preview.jpg)
 
 [给小王买杯咖啡](https://ko-fi.com/little_wang)

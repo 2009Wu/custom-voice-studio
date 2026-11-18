@@ -1,5 +1,7 @@
 # Custom Voice Studio
 
+Separate voice reference, input, and result panels that adapt to narrow windows. The language menu lists the top 20 languages by total speakers, including Simplified and Traditional Chinese as Mandarin script options. Language switching keeps drafts in place.
+
 [使用说明](README.md) · [Windows download](https://github.com/2009Wu/custom-voice-studio/releases/latest/download/Custom-Voice-Studio-Windows.zip) · [Hugging Face](https://huggingface.co/spaces/Little-Wang/custom-voice-studio)
 
 Upload a reference voice (MP3/MP4/WAV/M4A/FLAC), then enter text OR upload an existing vocal song, and click Generate. No fixed person's reference or separate speaker training is used.
@@ -16,7 +18,7 @@ Independent app runtime/models live in .runtime/.cache. No system Python or exte
 
 Software is GPL-3.0, derived from Wang Hongwen Voice Studio v0.3.0. Upstream code/model notices are in THIRD_PARTY_NOTICES.md. No personal voice reference or model weights are bundled in the ZIP. All generated audio is synthetic, not an authentic recording.
 
-![一键生成界面 / App preview](docs/app-preview.png)
+![Updated generation workspace](docs/studio-preview.jpg)
 
 ## Desktop shortcut
 
