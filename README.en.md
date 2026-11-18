@@ -20,6 +20,10 @@ Software is GPL-3.0, derived from Wang Hongwen Voice Studio v0.3.0. Upstream cod
 
 ![Updated generation workspace](docs/studio-preview.jpg)
 
+## Feedback
+
+Share feature ideas, bugs, or feedback about speech and singing quality. [Open the public feedback form](https://github.com/2009Wu/custom-voice-studio/issues/new?template=studio-feedback.yml) (GitHub sign-in required).
+
 ## Desktop shortcut
 
 First launcher run and successful setup create a current-user desktop shortcut. After setup, double-click it to start the local server and open the studio directly. A second click reuses the running instance. Keep the extracted app folder. After moving it, run the EXE from the new location or use 创建 / 修复桌面快捷方式 (Create / repair desktop shortcut). Downloading a ZIP alone does not execute the app. Desktop permission errors do not invalidate installation.
