@@ -34,3 +34,7 @@ Pinned model revision identifiers and model-card license metadata are in `models
 4. The low-memory path in `inference.py` alternates diffusion/vocoder GPU residency while preserving arithmetic, precision and chunk sizes.
 
 The reference transcription path uses the same pinned openai/whisper-small model, including its tokenizer and decoder. See the [Whisper model card](https://huggingface.co/openai/whisper-small) and [Qwen3-TTS voice-clone API](https://github.com/QwenLM/Qwen3-TTS#voice-clone).
+
+## Microsoft WebView2
+
+The Windows desktop interface uses the Microsoft WebView2 SDK. The SDK redistribution license and third-party notices are included in [windows/webview2](windows/webview2). The updater installs the studio files, and the desktop window uses the WebView2 Runtime available on Windows.
