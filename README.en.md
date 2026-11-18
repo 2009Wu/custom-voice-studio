@@ -1,6 +1,6 @@
 # Custom Voice Studio
 
-**Windows v0.3.4** · [Release notes](docs/releases/v0.3.4.md)
+**Windows v0.3.5** · [Release notes](docs/releases/v0.3.5.md)
 
 Open the studio from its desktop shortcut. The app checks for updates at startup and can install them in one click.
 
