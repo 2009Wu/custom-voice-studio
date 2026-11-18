@@ -1,7 +1,7 @@
 {
   "id": "custom-voice-studio",
   "name": "自选音色工作室",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "repository": "2009Wu/custom-voice-studio",
   "launcher": "Start Custom Voice Studio.exe",
   "asset": "Custom-Voice-Studio-Windows.zip"
