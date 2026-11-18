@@ -43,7 +43,7 @@ def select_clip(audio, rate, seconds=20):
     return clip*gain, begin/rate
 
 
-def prepare_reference(source, job, start=0, seconds=20, max_mb=500):
+def prepare_reference(source, job, start=0, seconds=20, max_mb=500, assess=False):
     source = Path(source).resolve(strict=True)
     start,seconds=float(start),float(seconds)
     if not source.is_file() or source.stat().st_size > max_mb*1024**2:
@@ -59,11 +59,26 @@ def prepare_reference(source, job, start=0, seconds=20, max_mb=500):
             '-ss',str(start),'-i',source,'-t',str(min(90,duration-start)),
             '-map','0:a:0','-vn','-ac','1','-ar','44100','-c:a','pcm_f32le',scan])
     audio,rate=sf.read(scan,dtype='float32')
-    clip,offset=select_clip(audio,rate,seconds)
+    offset = 0
+    assessment = {}
+    if assess:
+        from reference_check import inspect_reference
+        offset, report = inspect_reference(audio, rate, seconds)
+        assessment['assessment'] = report
+        if not report['recommend']:
+            return None, assessment
+        first = round(offset * rate)
+        audio = audio[first:first + round(seconds * rate)]
+    try:
+        clip, begin = select_clip(audio, rate, seconds)
+    except ValueError as error:
+        if not assess:
+            raise
+        return None, dict(assessment, recommendation_error=str(error))
     target=job/'reference.wav'
     sf.write(target,clip,rate,subtype='PCM_24')
-    return target, {'source_duration_seconds':duration,'clip_start_seconds':round(start+offset,3),
-                    'clip_duration_seconds':round(len(clip)/rate,3),'sample_rate':rate}
+    return target, {'source_duration_seconds':duration,'clip_start_seconds':round(start+offset+begin,3),
+                    'clip_duration_seconds':round(len(clip)/rate,3),'sample_rate':rate, **assessment}
 
 
 def use_prepared(source, job):

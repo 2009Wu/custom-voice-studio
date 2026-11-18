@@ -9,11 +9,12 @@ from studio_library import (history_choices,get_record,retry_request,redo_reques
     voice_choices,save_voice,load_voice,delete_voice,open_exports)
 from runner import GPU_LOCK, run_job
 from studio_update import check_on_open, stage_update, request_update
-from studio_presentation import ACCENT, I18N, LOCALE_CONTROL, portrait, tr
+from studio_presentation import ACCENT, I18N, INTERFACE, LOCALE_CONTROL, portrait, tr
+from studio_editor import editable_markup
 
 MEDIA=['.mp3','.mp4','.wav','.m4a','.flac','.ogg','.webm','.mov','.aac','.mkv']
 
-def prepare_clip(source,start=0,seconds=20,exact=False):
+def prepare_clip(source,start=0,seconds=20,exact=False,assess=False):
     if not source:raise ValueError('请先上传参考人声。')
     preview_root=STATE/'reference-previews';preview_root.mkdir(parents=True,exist_ok=True)
     from studio_paths import owned_path
@@ -24,6 +25,7 @@ def prepare_clip(source,start=0,seconds=20,exact=False):
     command=[SING_PYTHON,str(ROOT/'studio_actions.py'),str(source),str(folder),
         '--start',str(start),'--seconds',str(seconds)]
     if exact:command+=['--prepared']
+    if assess:command+=['--assess']
     env=os.environ.copy();env.update(PYTHONIOENCODING='utf-8',PYTHONUNBUFFERED='1')
     options={'creationflags':subprocess.CREATE_NO_WINDOW} if os.name=='nt' else {}
     done=subprocess.run(command,cwd=ROOT,env=env,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=120,**options)
@@ -33,10 +35,16 @@ def prepare_clip(source,start=0,seconds=20,exact=False):
         raise ValueError('无法读取参考声音，请检查素材或在启动器修复安装。')
     return json.loads(done.stdout.strip().splitlines()[-1])
 
-def result_values(result,message):
-    return (result.get('audio'),result.get('audio'),result.get('flac'),result.get('wav'),
-        result.get('video'),result.get('details'),result.get('reference'),result.get('reference_text',''),
-        message,gr.update(choices=history_choices(),value=result.get('history_id')),result.get('history_id'))
+def result_values(result, message):
+    try:
+        markup = editable_markup(result)
+    except (OSError, ValueError, RuntimeError):
+        markup = ''
+    return (result.get('audio'), result.get('audio'), result.get('flac'), result.get('wav'),
+        result.get('video'), result.get('details'), result.get('reference'), result.get('reference_text', ''),
+        message, gr.update(choices=history_choices(), value=result.get('history_id')), result.get('history_id'),
+        gr.update(visible=bool(markup)), markup, None, gr.update(interactive=False))
+
 
 def upload_field(label, identifier, height):
     with gr.Column(min_width=0, elem_classes=['studio-upload-field'], elem_id=identifier):
@@ -60,13 +68,14 @@ def release_notes(latest):
 
 
 def build_app(api):
+    from studio_analytics import record_usage
     custom=PRODUCT['id']=='custom-voice-studio'
     def work(request,progress):
         try:
             for fraction,message,result in run_job(request):
                 progress(fraction,desc=message)
                 if result:yield result_values(result,message+'\n保存位置：'+str(Path(result['audio']).parent))
-                else:yield *(gr.skip() for _ in range(8)),message,gr.skip(),gr.skip()
+                else:yield *(gr.skip() for _ in range(8)), message, *(gr.skip() for _ in range(6))
         except Exception as error:raise gr.Error(str(error)) from error
 
     with gr.Blocks(title=PRODUCT['name'], fill_width=True, delete_cache=(600,3600)) as demo:
@@ -90,12 +99,13 @@ def build_app(api):
                         gr.Markdown('## ' + str(tr('参考音色')), header_links=False, elem_classes=['studio-card-heading'])
                         favorite=gr.Dropdown(choices=voice_choices(),label=tr('收藏的音色'),value=None)
                         reference = upload_field('参考人声 · MP3 / MP4 等', 'studio-voice-upload', 108)
-                        with gr.Accordion(tr('先听参考片段 / 收藏音色'),open=False):
+                        assess_ref = gr.Button(tr('体检并推荐片段'), elem_id='studio-reference-check')
+                        with gr.Accordion(tr('先听参考片段 / 收藏音色'),open=False) as reference_panel:
                             ref_start=gr.Number(value=0,minimum=0,maximum=3600,label=tr('从第几秒开始寻找清晰讲话'))
                             ref_seconds=gr.Dropdown([5,10,15,20,25],value=20,label=tr('参考片段最长秒数'))
                             inspect=gr.Button(tr('提取并试听参考片段'))
                             selected_ref=gr.Audio(label=tr('参考片段（可拖动裁剪，保留 3–25 秒）'),type='filepath',editable=True)
-                            ref_hint=gr.Textbox(label=tr('参考片段信息'),interactive=False)
+                            ref_hint=gr.Textbox(label=tr('参考片段信息'),interactive=False,lines=3)
                             ref_text=gr.Textbox(label=tr('参考片段原话（留空自动识别）'),lines=2)
                             ref_lang=gr.Dropdown(LANGUAGES,value='Auto',label=tr('参考讲话语言'))
                             voice_name=gr.Textbox(label=tr('收藏名称'),placeholder=tr('例如：我的声音'))
@@ -132,6 +142,16 @@ def build_app(api):
                             wav=gr.DownloadButton(tr('下载 WAV'));movie=gr.DownloadButton(tr('下载 MP4'));details=gr.DownloadButton(tr('生成参数'))
                             used=gr.Audio(label=tr('实际使用的参考声音'),type='filepath',interactive=False)
                             transcript=gr.Textbox(label=tr('参考原话'),interactive=False)
+                        with gr.Accordion(tr('波形选段与 A/B 试听'), open=True,
+                                          visible=False, elem_id='studio-refine-panel') as refine_panel:
+                            editor = gr.HTML('', elem_id='studio-refine-editor',
+                                             js_on_load=(INTERFACE / 'studio_editor.js').read_text(encoding='utf-8'))
+                            edit_start = gr.Number(visible=False)
+                            edit_end = gr.Number(visible=False)
+                            with gr.Row():
+                                redo_selection = gr.Button(tr('重做选中片段'), variant='primary')
+                                accept_b = gr.Button(tr('采用 B 版'), interactive=False)
+                            comparison = gr.State(None)
                         folder=gr.Button(tr('打开作品文件夹'))
                         current=gr.State(None)
             with gr.Tab(tr('作品历史'), id='studio-history'):
@@ -164,8 +184,18 @@ def build_app(api):
                                           elem_id='studio-toast-install-update')
                 toast_dismiss = gr.Button(tr('关闭提醒'), size='sm', scale=0, min_width=72)
         gr.Markdown(tr('所有输出均为 AI 合成，不能作为本人真实录音。'), elem_id='studio-footnote')
-        outputs=[audio,mp3,flac,wav,movie,details,used,transcript,status,history,current]
+        outputs = [audio, mp3, flac, wav, movie, details, used, transcript, status, history, current,
+                   refine_panel, editor, comparison, accept_b]
         inputs=[reference,selected_ref,text,song,performance,steps,vocals,music,video,language,ref_start,ref_seconds,ref_text,ref_lang,clip_start,clip_seconds]
+
+        def track_download(output_format):
+            def track(identifier):
+                record_usage('download', identifier, output_format)
+            return track
+
+        for button, output_format in ((mp3, 'mp3'), (flac, 'flac'), (wav, 'wav'), (movie, 'mp4')):
+            button.click(track_download(output_format), inputs=current, api_name=False,
+                         queue=False, show_progress='hidden')
         def make(values,is_preview):
             reference,selected,text,song,performance,steps,vocals,music,video,language,rs,rl,rt,lang,cs,cl=values
             if custom:
@@ -201,14 +231,51 @@ def build_app(api):
                 (approved,full,[current],False),(history_full,full,[history],False),
                 (redo,replace,[history,redo_start,redo_end],'redo'),(retry,repeat,[history],False)]:
             events.append(button.click(fn,args,outputs,api_name=name,concurrency_limit=1,concurrency_id='gpu'))
+        def refine(identifier, start, end, progress=gr.Progress()):
+            try:
+                request = redo_request(identifier, start, end)
+                original = get_record(identifier)['result']
+                selection = (float(start), float(end))
+                yield editable_markup(original, selection=selection), None, gr.update(interactive=False), '正在重做选中片段…'
+                for fraction, message, result in run_job(request):
+                    progress(fraction, desc=message)
+                    if result:
+                        yield (editable_markup(original, result, selection), (identifier, result['history_id']),
+                               gr.update(interactive=True), '重做完成。试听 A 和 B，满意后点击「采用 B 版」。')
+                    else:
+                        yield gr.skip(), gr.skip(), gr.skip(), message
+            except Exception as error:
+                raise gr.Error(str(error)) from error
+
+        events.append(redo_selection.click(
+            refine, [current, edit_start, edit_end], [editor, comparison, accept_b, status],
+            js="""(id) => {
+                const panel = document.querySelector('#studio-refine-editor');
+                return [id, panel.querySelector('[data-range=start]').valueAsNumber,
+                            panel.querySelector('[data-range=end]').valueAsNumber];
+            }""", concurrency_limit=1, concurrency_id='gpu', api_name=False))
+
+        def apply_comparison(identifier, candidate):
+            if not candidate or candidate[0] != identifier:
+                raise gr.Error('当前作品已切换，请重新选择要精修的片段。')
+            record = get_record(candidate[1])
+            if record.get('parent') != identifier or record.get('status') != 'completed':
+                raise gr.Error('重做版暂时无法载入。')
+            record_usage('adopt_b', record['id'])
+            return result_values(record['result'], '已采用 B 版：' + record['directory'])
+
+        accept_b.click(apply_comparison, [current, comparison], outputs, concurrency_limit=1,
+                       concurrency_id='gpu', api_name=False)
         stop.click(lambda:'已停止，已完成的作品仍然保留。',outputs=status,cancels=events,queue=False,api_name=False)
         def load_history(identifier):
             try:
                 record=get_record(identifier)
-                if record['status']=='failed':return *(gr.skip() for _ in range(8)),record['error'],gr.skip(),identifier
+                if record['status'] == 'failed':
+                    return (*(gr.skip() for _ in range(8)), record['error'], gr.skip(), identifier,
+                            gr.update(visible=False), '', None, gr.update(interactive=False))
                 return result_values(record['result'],'已载入：'+record['directory'])
             except Exception as error:raise gr.Error(str(error)) from error
-        load.click(load_history,[history],outputs,api_name=False)
+        load.click(load_history, [history], outputs, concurrency_id='gpu', api_name=False)
         refresh.click(lambda:gr.update(choices=history_choices()),outputs=history,api_name=False)
         folder.click(lambda identifier:'作品目录：'+open_exports(identifier),[current],status,api_name=False)
         if custom:
@@ -218,7 +285,33 @@ def build_app(api):
                     return info['path'],f'起点 {info["clip_start_seconds"]:g} 秒 · {info["clip_duration_seconds"]:g} 秒。请先听一遍；多人、杂音或音乐较多会影响相似度。',''
                 except Exception as error:raise gr.Error(str(error)) from error
             inspect.click(inspect_reference,[reference,ref_start,ref_seconds],[selected_ref,ref_hint,ref_text],api_name=False)
-            reference.change(lambda:(None,'',None),outputs=[selected_ref,ref_text,favorite],api_name=False)
+            def assess_reference(source, start, seconds):
+                try:
+                    info = prepare_clip(source, start, seconds, assess=True)
+                except Exception as error:
+                    raise gr.Error(str(error)) from error
+                assessment = info['assessment']
+                messages = {
+                    'too_short': '可能是讲话的时长偏短。试试更长的清晰讲话。',
+                    'clipping': '推荐区间有可能削波或破音，建议换一段。',
+                    'bed': '录音持续有底声，建议试听确认有无背景音乐或噪声。',
+                    'timbre_change': '检测到明显音色变化，建议确认是否有多人说话。',
+                }
+                summary = [
+                    f'已检查从 {start:g} 秒起的 {assessment["scan_seconds"]:g} 秒。',
+                    f'推荐区间内疑似讲话 {assessment["speech_like_seconds"]:g} 秒。',
+                ]
+                if info.get('path'):
+                    summary.append(f'推荐从 {info["clip_start_seconds"]:g} 秒开始，试听 {info["clip_duration_seconds"]:g} 秒。')
+                else:
+                    summary.append(info.get('recommendation_error') or '未找到足够清晰的候选。')
+                summary.extend(messages[hint] for hint in assessment['hints'])
+                summary.append('这是初筛，请试听确认只有目标人物在说话。')
+                return info.get('path'), '\n'.join(summary), '', gr.update(open=True)
+
+            assess_ref.click(assess_reference, [reference, ref_start, ref_seconds],
+                             [selected_ref, ref_hint, ref_text, reference_panel], api_name=False)
+            reference.change(lambda:(None,'',None,''),outputs=[selected_ref,ref_text,favorite,ref_hint],api_name=False)
             selected_ref.input(lambda:'',outputs=ref_text,api_name=False)
             def save_favorite(name,clip,text,language):
                 try:
