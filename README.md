@@ -8,7 +8,7 @@
 
 **[下载 Windows 版](https://github.com/2009Wu/custom-voice-studio/releases/latest/download/Custom-Voice-Studio-Windows.zip)** · [Hugging Face 项目页](https://huggingface.co/spaces/Little-Wang/custom-voice-studio) · [更新记录](CHANGELOG.md)
 
-当前 Windows 版 **v0.3.7**。[版本说明](docs/releases/v0.3.7.md)
+当前 Windows 版 **v0.3.8**。[版本说明](docs/releases/v0.3.7.md)
 
 安装更新后，缺少的桌面快捷方式会自动补建。已有快捷方式会沿用，图标变更时会更新原图标。
 
@@ -89,7 +89,11 @@ v0.1.3 进一步移除本程序不使用的上游演示网页资源、开发头�
 不会发送。后台数据保留 90 天。
 
 
-## 本次更新 · v0.3.7
+## 本次更新 · v0.3.8
+
+修复 FFmpeg 下载地址失效导致首次安装卡在 12% 的问题。下载失败时会显示依赖及 HTTP 状态，已校验文件可复用。
+
+## 本次更新 · v0.3.7 · 上一版
 
 - 双击桌面图标后先显示工作室窗口，同时加载本地服务与界面。
 - 完整翻唱可用已保存的人声、伴奏重新混音。调完音量可试听约 12 秒，再将整首另存到作品历史。
